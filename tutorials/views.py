@@ -8,54 +8,38 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from django.http import Http404
+from rest_framework import mixins,generics
 
 
-class TutorialsList(APIView):
-    """
-    List all snippets, or create a new snippet.
-    """
-    def get(self, request, format=None):
-        snippets = Tutorial.objects.all()
-        serializer = TutorialSerializer(snippets, many=True)
-        return Response(serializer.data)
+class TutorialsList(generics.ListCreateAPIView):
+    queryset = Tutorial.objects.all()
+    serializer_class = TutorialSerializer
 
-    def post(self, request, format=None):
+    '''
+    自定义get和post方法,可以去掉
+    '''
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
 
-        serializer = TutorialSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
-class TutorialsDetail(APIView):
-    """
-    Retrieve, update or delete a snippet instance.
-    """
-    def get_object(self, pk):
-        try:
-            return Tutorial.objects.get(pk=pk)
-        except Tutorial.DoesNotExist:
-            raise Http404
 
-    def get(self, request, pk, format=None):
-        snippet = self.get_object(pk)
-        serializer = TutorialSerializer(snippet)
-        return Response(serializer.data)
+class TutorialsDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Tutorial.objects.all()
+    serializer_class = TutorialSerializer
+    '''
+    自定义get和post方法,可以去掉
+    '''
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
 
-    def put(self, request, pk, format=None):
-        snippet = self.get_object(pk)
-        if request.data["title"] == "test":
-            request.data["title"] = "hahaa"
-        serializer = TutorialSerializer(snippet, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
 
-    def delete(self, request, pk, format=None):
-        snippet = self.get_object(pk)
-        snippet.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
 
 @api_view(['GET','POST'])
 def get_test(request,format=None):
@@ -76,6 +60,7 @@ class Get_info(APIView):
         return Response(info)
     def post(self, request, format=None):
         try:
+            request.POST._mutable = True   #修改requset.POST 的值需要
             print(request.data["info"])
             info = request.data["info"]
         except:
