@@ -9,36 +9,29 @@ from rest_framework.views import APIView
 from rest_framework import status
 from django.http import Http404
 from rest_framework import mixins,generics
+from rest_framework import viewsets
 
+class TutorialsViewSet(viewsets.ModelViewSet):
+    """
+    This viewset automatically provides `list`, `create`, `retrieve`,
+    `update` and `destroy` actions.
 
-class TutorialsList(generics.ListCreateAPIView):
+    Additionally we also provide an extra `highlight` action.
+    """
     queryset = Tutorial.objects.all()
     serializer_class = TutorialSerializer
 
-    '''
-    自定义get和post方法,可以去掉
-    '''
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        print("list")
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            print("lis3333")
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
 
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
-
-
-class TutorialsDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Tutorial.objects.all()
-    serializer_class = TutorialSerializer
-    '''
-    自定义get和post方法,可以去掉
-    '''
-    def get(self, request, *args, **kwargs):
-        return self.retrieve(request, *args, **kwargs)
-
-    def put(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
-
-    def delete(self, request, *args, **kwargs):
-        return self.destroy(request, *args, **kwargs)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 @api_view(['GET','POST'])
@@ -65,4 +58,17 @@ class Get_info(APIView):
             info = request.data["info"]
         except:
             return Response("no avgs")
+        return Response(info)
+
+
+class GetViewSet(viewsets.ModelViewSet):
+    '''
+    必须有序列化的动作,否则会报错
+    '''
+    queryset = Tutorial.objects.all()
+    serializer_class = TutorialSerializer
+
+
+    def list(self, request, *args, **kwargs):
+        info = request.GET["info"]
         return Response(info)

@@ -20,8 +20,11 @@ from tutorials import views
 from rest_framework import routers
 from rest_framework.routers import DefaultRouter
 
-router = routers.DefaultRouter()
+#router = routers.DefaultRouter()
 #router.register(r'posts', views.PostViewSet, basename='post')
+router = DefaultRouter()
+router.register(r'tutorials', views.TutorialsViewSet)
+router.register(r'get_info', views.GetViewSet,basename='service')
 urlpatterns = [
     path("api/", include(router.urls)),
     path("api/auth/", include("rest_framework.urls", namespace="rest_framework")),
@@ -30,8 +33,9 @@ urlpatterns = [
     #path('tutorials_list/', views.tutorials_list),
     #path('tutorials_detail/<int:pk>/', views.tutorials_detail),
     path('get_test/', views.get_test),
-    path('tutorials/', views.TutorialsList.as_view()),
-    path('tutorials_detail/<int:pk>/', views.TutorialsDetail.as_view()),
-    path('get_info/',views.Get_info.as_view()),
+    #path('tutorials/', views.TutorialsList.as_view()),
+    #path('tutorials_detail/<int:pk>/', views.TutorialsDetail.as_view()),
+    #path('get_info/',views.Get_info.as_view()),
+    path('', include(router.urls)),
 
 ]

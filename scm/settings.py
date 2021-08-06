@@ -131,5 +131,5 @@ REST_FRAMEWORK = {
     # 如果想单独控制每个接口的分页情况，可不设置这个选项，而是在视图函数中进行配置
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     # 这个选项控制分页后每页的资源个数
-    "PAGE_SIZE": 2,
+    "PAGE_SIZE": 20,
 }
