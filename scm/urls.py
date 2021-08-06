@@ -27,7 +27,11 @@ urlpatterns = [
     path("api/auth/", include("rest_framework.urls", namespace="rest_framework")),
     #path("api/index/", views.index),
     #path('api/index/', views.IndexPostListAPIView.as_view()),
-    path('tutorials_list/', views.tutorials_list),
-    path('tutorials_detail/<int:pk>/', views.tutorials_detail),
-    path('get_test/', views.get_test)
+    #path('tutorials_list/', views.tutorials_list),
+    #path('tutorials_detail/<int:pk>/', views.tutorials_detail),
+    path('get_test/', views.get_test),
+    path('tutorials/', views.TutorialsList.as_view()),
+    path('tutorials_detail/<int:pk>/', views.TutorialsDetail.as_view()),
+    path('get_info/',views.Get_info.as_view()),
+
 ]
